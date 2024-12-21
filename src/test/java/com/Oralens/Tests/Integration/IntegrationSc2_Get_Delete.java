@@ -1,36 +1,43 @@
 package com.Oralens.Tests.Integration;
 
+import com.Oralens.POJO.AppointmentBooking;
 import com.Oralens.POJO.AppointmentBookingResponse;
 import com.Oralens.base.BaseTest;
 import io.qameta.allure.Description;
 import io.qameta.allure.Owner;
 import io.restassured.RestAssured;
+import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.Test;
 
-public class IntegrationSc1_Create_Delete extends BaseTest {
-    @Test(groups = "qa", priority = 1)
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class IntegrationSc2_Get_Delete extends BaseTest {
+    @Test(groups = "IntSc2", priority = 1)
     @Owner("Tester")
-    @Description("TC#INTSc1 - Step 1. Verify that the Appointment can be Created")
-    public void testCreateBooking_I1(ITestContext iTestContext){
-        response = RestAssured.given(requestSpecification)
-                .when().body(payloadManager.createPayloadBookingAsString()).post();
+    @Description("TC#INTSc2 - Step 1. Verify that the Appointment By ID")
+    public void testVerifyBookingId(ITestContext iTestContext){
 
+        response = RestAssured
+                .given(requestSpecification)
+                .when().get();
         validatableResponse = response.then().log().all();
-        validatableResponse.statusCode(201);
-
-        AppointmentBookingResponse bookingResponse = payloadManager.bookingResponseJava(response.asString());
-        assertActions.verifyStringKey(bookingResponse.getName(), "Garima");
-        System.out.println(bookingResponse.getId());
-
-        iTestContext.setAttribute("bookingid",bookingResponse.getId());
+        // Validatable Assertion
+        validatableResponse.statusCode(200);
     }
 
-    @Test(groups = "qa", priority = 4)
+    @Test(groups = "IntSc2", priority = 2)
     @Owner("Tester")
-    @Description("TC#INTSc1 - Step 2. Delete the Appointment by ID")
+    @Description("TC#INTSc2 - Step 2. Delete the Appointment by ID")
     public void testDeleteBookingById_I1(ITestContext iTestContext) {
+        iTestContext.setAttribute("bookingid",1);
+
         Integer bookingid = (Integer) iTestContext.getAttribute("bookingid");
+
+        // GET Request - to verify that the firstname after creation
+//        String basePathGET = "/" + bookingid;
+//        System.out.println(basePathGET);
+
 
         String basePathDELETE = "/" + bookingid;
 
